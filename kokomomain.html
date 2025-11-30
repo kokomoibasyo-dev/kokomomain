@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ここも | 学びと暮らしの第3の場所</title>
+    <!-- Chosen Palette: Sprout & Earth -->
+    <!-- Primary: #2E8B57 (Sage Green - Growth/Stability) -->
+    <!-- Secondary: #E5A358 (Terracotta - Warmth/Energy) -->
+    <!-- Background: #FBF8F3 (Light Beige - Comfort/Canvas) -->
+    <!-- Text: #2C2C2C (Dark Charcoal - Readability/Softness) -->
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@700&family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Application Structure Plan: 
+         This SPA acts as a digital brochure and interactive guide for "Cocomo".
+         1. Hero Section: Emotional engagement with the core message and a mock TTS feature for accessibility.
+         2. Social Context: Explains the "Why" (Truancy, Career Gap, Isolation) before the "What".
+         3. Persona Guide: A tabbed interface allowing users (Parents, Children, Partners) to filter services relevant to them.
+         4. Service Ecosystem: Visualizes the 3 pillars (Child, Parent, Partner) using card layouts.
+         5. Sustainability Model: Uses a Chart.js doughnut chart to visually explain how adult fees and sponsorship fund free access for children.
+         6. Independent Businesses: Highlights the separate revenue streams (PBL, Disaster Prevention) with an interactive demo for PBL.
+         7. Organization Info: Static details and Representative message.
+    -->
+
+    <!-- Visualization & Content Choices:
+         1. Funding Structure: Doughnut Chart -> Goal: Inform. Visually demonstrates the "Sustainable Model" where paid sectors support the free sector.
+         2. Persona Filter: Tabbed Interface -> Goal: Personalize. Reduces information overload by focusing on user needs.
+         3. PBL Generator: Input/Output Simulation -> Goal: Engage. Demonstrates the value of the "PBL Accompanying Plan" interactively.
+         4. Iconography: Unicode Emojis -> Goal: Visual cues without using SVG files (per constraints).
+         CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
+    -->
+
+    <style>
+        :root {
+            --color-text: #2C2C2C;
+            --color-bg: #FBF8F3;
+            --color-primary: #2E8B57;
+            --color-secondary: #E5A358;
+            --color-accent-light: #EBF7E9;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            line-height: 1.8;
+        }
+
+        .heading-font {
+            font-family: 'Shippori Mincho', serif;
+        }
+
+        /* Chart Container Styling - Mandatory */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            height: 350px; /* Controlled height */
+            margin: 0 auto;
+        }
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Custom Shapes via CSS (No SVG) */
+        .shape-circle {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+            transition: background-color 0.3s;
+            border-radius: 9999px;
+            padding: 0.75rem 2rem;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-primary:hover {
+            background-color: #256f46;
+        }
+
+        .btn-secondary {
+            background-color: var(--color-secondary);
+            color: white;
+            transition: background-color 0.3s;
+            border-radius: 9999px;
+            padding: 0.5rem 1.5rem;
+            font-weight: bold;
+        }
+        .btn-secondary:hover {
+            background-color: #d08e45;
+        }
+
+        .persona-btn {
+            border: 2px solid #e5e7eb;
+            background: white;
+            color: #4b5563;
+            transition: all 0.3s;
+        }
+        .persona-btn.active {
+            background-color: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+            transform: scale(1.05);
+        }
+
+        /* Animation classes */
+        .fade-enter {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 300ms, transform 300ms;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="#" class="flex items-center space-x-3 group text-decoration-none">
+                    <!-- Logo placeholder referencing uploaded file -->
+                    <img src="uploaded:logo (1).png-1f7f3e11-dd0f-4d74-98fe-c3cc83eb4d91" alt="Cocomo Logo" class="h-14 w-auto group-hover:opacity-80 transition object-contain">
+                    <span class="text-xl font-bold heading-font text-gray-800">ここも</span>
+                </a>
+                
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#vision" class="text-gray-600 hover:text-[#2E8B57] font-medium transition">理念・課題</a>
+                    <a href="#services" class="text-gray-600 hover:text-[#2E8B57] font-medium transition">サービス</a>
+                    <a href="#independent" class="text-gray-600 hover:text-[#2E8B57] font-medium transition">独立事業</a>
+                    <a href="#sustainability" class="text-gray-600 hover:text-[#2E8B57] font-medium transition">仕組み</a>
+                </nav>
+
+                <button onclick="scrollToCTA()" class="btn-secondary shadow-md hover:shadow-lg transform transition">
+                    お問い合わせ
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-16 pb-20 overflow-hidden bg-[#FBF8F3]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
+            <div class="space-y-6">
+                <div class="inline-flex items-center px-3 py-1 rounded-full bg-[#EBF7E9] text-[#2E8B57] text-sm font-bold">
+                    <span class="mr-2">🌱</span>
+                    コミュニティ型学習サポート
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold heading-font leading-tight text-gray-900">
+                    学校に行けない日が、<br>
+                    <span class="text-[#E5A358]">“人生のスタートライン”</span><br>
+                    になる場所。
+                </h1>
+                <p class="text-lg text-gray-700 leading-relaxed max-w-lg" id="heroText">
+                    不登校でも、そうじゃなくても。子どもが安心して過ごし、親が自分らしく働ける“学びと暮らしの第3の場所”。
+                </p>
+                
+                <!-- TTS Interaction -->
+                <div class="flex items-center space-x-4">
+                    <button id="ttsBtn" onclick="toggleTTS()" class="flex items-center space-x-2 px-4 py-2 bg-white border border-gray-200 hover:bg-gray-50 rounded-lg transition text-gray-700 font-medium shadow-sm">
+                        <span id="ttsIcon">🔊</span>
+                        <span id="ttsLabel">想いを聴く</span>
+                    </button>
+                    <div id="ttsPlayer" class="hidden h-10 bg-[#EBF7E9] rounded-full px-4 flex items-center text-[#2E8B57] text-sm font-bold animate-pulse">
+                        <span class="mr-2">●</span> 再生中...
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative">
+                <div class="absolute inset-0 bg-[#E5A358] opacity-10 rounded-3xl transform rotate-3 scale-105"></div>
+                <div class="relative bg-white p-4 rounded-3xl shadow-xl">
+                    <!-- Placeholder visual: Canvas-like structure -->
+                    <div class="aspect-video bg-[#FBF8F3] rounded-2xl overflow-hidden flex flex-col items-center justify-center relative border-2 border-dashed border-[#2E8B57]/30">
+                        <div class="text-6xl mb-2">🏡</div>
+                        <p class="text-xl font-bold text-[#2E8B57] heading-font">共育・共働コミュニティ</p>
+                        <p class="text-sm text-gray-500 mt-1">古民家リノベーション空間</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Context: Social Issues (Why we exist) -->
+    <section id="vision" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold heading-font text-gray-900">私たちを取り巻く課題</h2>
+                <p class="text-gray-600 mt-2">「ここも」が解決を目指す3つの社会背景</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-6 bg-[#FBF8F3] rounded-2xl border-l-4 border-[#2E8B57]">
+                    <div class="text-3xl mb-4">🏫</div>
+                    <h3 class="font-bold text-lg mb-2">不登校・居場所問題</h3>
+                    <p class="text-sm text-gray-700">学校復帰だけでなく、「自分らしい生き方」を見つけるための安全基地が必要です。</p>
+                </div>
+                <div class="p-6 bg-[#FFF4E5] rounded-2xl border-l-4 border-[#E5A358]">
+                    <div class="text-3xl mb-4">📉</div>
+                    <h3 class="font-bold text-lg mb-2">親のキャリア断絶</h3>
+                    <p class="text-sm text-gray-700">子供の見守りのため親が離職することは、家庭だけでなく社会全体の人的資本の損失です。</p>
+                </div>
+                <div class="p-6 bg-indigo-50 rounded-2xl border-l-4 border-indigo-500">
+                    <div class="text-3xl mb-4">🏘️</div>
+                    <h3 class="font-bold text-lg mb-2">地域社会の希薄化</h3>
+                    <p class="text-sm text-gray-700">孤立しがちな親子を地域や企業と繋ぎ、多世代による「共育」の循環を作ります。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Persona Guide -->
+    <section id="services" class="py-16 bg-[#FBF8F3] shadow-inner">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold heading-font text-gray-900 mb-4">誰のための場所？</h2>
+                <p class="text-gray-600">あなたの立場を選択してください。それぞれのサービスをご案内します。</p>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-4 mb-10">
+                <button onclick="setPersona('child')" class="persona-btn active px-6 py-3 rounded-full font-bold">
+                    🧒 子ども (7-18歳)
+                </button>
+                <button onclick="setPersona('parent')" class="persona-btn px-6 py-3 rounded-full font-bold">
+                    👩‍💻 親御さん
+                </button>
+                <button onclick="setPersona('company')" class="persona-btn px-6 py-3 rounded-full font-bold">
+                    🤝 企業・地域の方
+                </button>
+            </div>
+
+            <!-- Dynamic Content Area -->
+            <div id="personaContent" class="bg-white rounded-3xl p-8 md:p-12 shadow-sm transition-all duration-300">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Independent Business Section -->
+    <section id="independent" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold tracking-widest uppercase">独立事業</span>
+                <h2 class="text-3xl font-bold heading-font mt-4 text-gray-900">地域ニーズに応える専門プログラム</h2>
+                <p class="text-gray-600 mt-2 max-w-2xl mx-auto">「ここも」の理念を基盤とした、より専門的で実践的な有料プログラムです。</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-12 items-start">
+                <!-- PBL Demo -->
+                <div class="bg-indigo-50 rounded-3xl p-8 shadow-sm">
+                    <h3 class="text-2xl font-bold text-indigo-900 mb-2">✨ PBL伴走プラン</h3>
+                    <p class="text-sm text-indigo-700 mb-6">探求テーマ設定からアウトプットまでを個別指導。お子様の「好き」をプロジェクト化します。</p>
+                    
+                    <div class="bg-white rounded-2xl p-6 shadow-sm">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">体験デモ：興味を入力してください</label>
+                        <div class="flex gap-2 mb-4">
+                            <input type="text" id="pblInput" placeholder="例：恐竜、動画編集、料理..." 
+                                class="w-full p-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:outline-none bg-gray-50">
+                            <button onclick="generatePBL()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 rounded-lg font-bold">生成</button>
+                        </div>
+                        <div id="pblResult" class="hidden animate-fade-in">
+                            <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                                <h4 class="font-bold text-indigo-800 text-sm mb-1" id="pblTitle"></h4>
+                                <p class="text-xs text-gray-600" id="pblDesc"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Disaster Prevention -->
+                <div class="space-y-6">
+                    <div class="bg-orange-50 p-6 rounded-2xl border-l-4 border-orange-400 card-hover">
+                        <div class="flex items-start">
+                            <div class="text-3xl mr-4">🛡️</div>
+                            <div>
+                                <h3 class="font-bold text-orange-900 text-lg">地域防犯防災コンサルタント</h3>
+                                <p class="text-sm text-gray-700 mt-2">自治体・企業向け。地域特性に合わせた実践的な防犯防災計画の策定を支援します。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-6 rounded-2xl border-l-4 border-blue-400 card-hover">
+                        <div class="flex items-start">
+                            <div class="text-3xl mr-4">⛑️</div>
+                            <div>
+                                <h3 class="font-bold text-blue-900 text-lg">子ども防犯防災教室</h3>
+                                <p class="text-sm text-gray-700 mt-2">子どもたち自身が「守られる側」から「自らを守る」主体になれるよう、体験型の教育プログラムを提供します。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sustainability & Pricing Model (Data Viz) -->
+    <section id="sustainability" class="py-20 bg-[#FBF8F3]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div>
+                    <h2 class="text-3xl font-bold heading-font text-gray-900 mb-6">持続可能な「共育」モデル</h2>
+                    <p class="text-gray-600 mb-8 text-lg">
+                        「ここも」は、子どもたちの居場所と学習サポートを<span class="font-bold text-[#2E8B57] bg-[#EBF7E9] px-2">完全無料</span>で提供し続けるために、独自のサスティナブルな収益構造を構築しています。
+                    </p>
+                    
+                    <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                        <h3 class="font-bold text-gray-900 mb-4 border-b pb-2">料金体系</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="font-bold text-[#2E8B57]">🧒 子ども (7-18歳)</span>
+                                <span class="font-bold text-xl">無料</span>
+                            </div>
+                            <div class="text-xs text-gray-500 pl-6 -mt-2">居場所利用、個別学習サポート(復帰特化)、メンター</div>
+
+                            <div class="flex justify-between items-center mt-4">
+                                <span class="font-bold text-[#E5A358]">👩‍💻 親 (コワーキング)</span>
+                                <span class="font-bold text-xl">低額月額制</span>
+                            </div>
+                            <div class="text-xs text-gray-500 pl-6 -mt-2">仕事場利用、交流イベント参加</div>
+
+                            <div class="flex justify-between items-center mt-4">
+                                <span class="font-bold text-indigo-500">🏢 サスティナブル協賛</span>
+                                <span class="font-bold text-xl">¥5,000<span class="text-sm font-normal">/口〜</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <div class="chart-container">
+                        <canvas id="sustainabilityChart"></canvas>
+                    </div>
+                    <div class="text-center mt-4">
+                        <p class="text-sm font-bold text-gray-600">運営コストの循環イメージ</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SDGs & Partnership -->
+    <section id="sdgs" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold heading-font text-center text-gray-900 mb-10">SDGsへの貢献</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center text-white">
+                <div class="bg-[#c5192d] p-6 rounded-xl shadow-md">
+                    <div class="text-4xl font-black mb-1 opacity-50">4</div>
+                    <h3 class="font-bold">質の高い教育を<br>みんなに</h3>
+                    <p class="text-xs mt-2 opacity-90">学校外の学びの場を保障</p>
+                </div>
+                <div class="bg-[#a21942] p-6 rounded-xl shadow-md">
+                    <div class="text-4xl font-black mb-1 opacity-50">8</div>
+                    <h3 class="font-bold">働きがいも<br>経済成長も</h3>
+                    <p class="text-xs mt-2 opacity-90">親のキャリア断絶を防ぐ</p>
+                </div>
+                <div class="bg-[#dd1367] p-6 rounded-xl shadow-md">
+                    <div class="text-4xl font-black mb-1 opacity-50">10</div>
+                    <h3 class="font-bold">人や国の<br>不平等をなくそう</h3>
+                    <p class="text-xs mt-2 opacity-90">経済格差による教育格差の是正</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Organization Info & Footer -->
+    <footer class="bg-[#2C2C2C] text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12">
+                <div class="col-span-1 lg:col-span-1">
+                    <div class="flex items-center space-x-2 mb-6">
+                        <span class="text-2xl">🌱</span>
+                        <span class="text-2xl font-bold heading-font">ここも</span>
+                    </div>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        学校に行けない日が、“人生のスタートライン”になる場所。<br>
+                        一般社団法人 ここも<br>
+                        設立: [設立年月日]<br>
+                        所在地: [所在地]
+                    </p>
+                    <!-- Rep Message Link (Mock) -->
+                    <div class="mt-4 p-4 bg-gray-800 rounded-lg">
+                        <p class="text-xs text-gray-400 italic">"子どもたちの個性と才能を諦めずに開花させるセカンドベースを目指して"</p>
+                        <p class="text-xs text-right text-[#E5A358] mt-2">- 代表理事</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-[#E5A358]">サービス</h4>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>子どもの居場所・学習支援 (無料)</li>
+                        <li>親向けコワーキング (低額)</li>
+                        <li>スキルアップ講座</li>
+                        <li>キャリア相談会</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-[#E5A358]">独立事業</h4>
+                    <ul class="text-gray-400 text-sm space-y-2">
+                        <li>PBL伴走プラン</li>
+                        <li>地域防犯防災コンサルタント</li>
+                        <li>子ども防犯防災教室</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-bold text-lg mb-4 text-[#E5A358]">お問い合わせ</h4>
+                    <p class="text-gray-400 text-sm mb-4">見学・説明会・協賛についてお気軽にご連絡ください。</p>
+                    <button class="w-full bg-[#E5A358] hover:bg-[#d08e45] text-white font-bold py-2 px-4 rounded transition">
+                        お問い合わせフォーム
+                    </button>
+                    <div class="mt-4 flex space-x-4 text-sm">
+                        <a href="#" class="text-gray-400 hover:text-white transition">活動レポート</a>
+                        <a href="#" class="text-gray-400 hover:text-white transition">公式Note</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500 text-sm">
+                &copy; 2025 Cocomo. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // --- Data Storage (Source Content) ---
+        const contentData = {
+            child: {
+                title: "子どもたちのための「ここも」",
+                desc: "「学校に行かなくても大丈夫？」そんな不安を、「ここでならやりたいことができる！」という自信に変える場所です。",
+                features: [
+                    { icon: "🌱", title: "自由な居場所", text: "好きな時間にきて、好きなことをして過ごせます。" },
+                    { icon: "📚", title: "個別学習サポート", text: "【復帰特化】学校に戻りたい意思がある子へ、学習の遅れを取り戻すサポートを無料で提供します。" },
+                    { icon: "🗣️", title: "メンターサポート", text: "対話を通じて内省を促し、自己肯定感を育みます。" }
+                ],
+                color: "border-[#2E8B57]"
+            },
+            parent: {
+                title: "親御さんのための「ここも」",
+                desc: "子どもの不登校でキャリアを諦めないでください。安心して子供を見守りながら、あなた自身の人生も大切にできる場所です。",
+                features: [
+                    { icon: "💻", title: "コワーキング", text: "子どもと同じ建物内で、集中して仕事ができます（Wi-Fi/電源完備）。低額な月額料金で利用可能。" },
+                    { icon: "📈", title: "スキルアップ講座", text: "求職や在宅ワークへの移行を目指す方向けの実践的スキル習得講座（有料）。" },
+                    { icon: "🤝", title: "キャリア相談会", text: "仕事復帰やキャリアチェンジに関する個別相談。" }
+                ],
+                color: "border-[#E5A358]"
+            },
+            company: {
+                title: "企業・パートナーとしての「ここも」",
+                desc: "未来の人材育成とSDGsへの貢献。単なる寄付ではなく、地域社会を変える「共育」パートナーになりませんか？",
+                features: [
+                    { icon: "💰", title: "協賛金協力", text: "運営資金や設備の提供を通じて、居場所の無料運営を支えます。" },
+                    { icon: "👩‍🏫", title: "スキル講座講師", text: "親向け講座への講師派遣やメンターとして参画。" },
+                    { icon: "🌍", title: "PBL協力", text: "子どもたちの探求活動へのアドバイスや職場見学の提供。" }
+                ],
+                color: "border-indigo-500"
+            }
+        };
+
+        // --- Interaction Logic: Persona Filter ---
+        function setPersona(persona) {
+            // Update buttons
+            document.querySelectorAll('.persona-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if(btn.textContent.includes(persona === 'child' ? '子ども' : persona === 'parent' ? '親' : '企業')) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Update Content with animation
+            const container = document.getElementById('personaContent');
+            container.classList.remove('fade-enter-active');
+            container.classList.add('fade-enter');
+            
+            setTimeout(() => {
+                const data = contentData[persona];
+                container.innerHTML = `
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">${data.title}</h3>
+                        <p class="text-gray-600 max-w-2xl mx-auto">${data.desc}</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        ${data.features.map(f => `
+                            <div class="bg-white p-6 rounded-xl shadow-md border-t-4 ${data.color}">
+                                <div class="text-3xl mb-3">${f.icon}</div>
+                                <h4 class="font-bold text-gray-900 mb-2">${f.title}</h4>
+                                <p class="text-sm text-gray-600">${f.text}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.classList.remove('fade-enter');
+                container.classList.add('fade-enter-active');
+            }, 100);
+        }
+
+        // --- Interaction Logic: TTS (Mock) ---
+        let isTTSPlaying = false;
+        function toggleTTS() {
+            const btn = document.getElementById('ttsBtn');
+            const player = document.getElementById('ttsPlayer');
+            
+            if (isTTSPlaying) {
+                isTTSPlaying = false;
+                player.classList.add('hidden');
+                btn.classList.remove('border-[#2E8B57]', 'text-[#2E8B57]');
+            } else {
+                isTTSPlaying = true;
+                player.classList.remove('hidden');
+                btn.classList.add('border-[#2E8B57]', 'text-[#2E8B57]');
+                setTimeout(() => { if(isTTSPlaying) toggleTTS(); }, 5000); // Auto stop mock
+            }
+        }
+
+        // --- Interaction Logic: PBL Generator (Mock) ---
+        function generatePBL() {
+            const input = document.getElementById('pblInput').value;
+            if (!input) return alert("興味のあることを入力してください");
+
+            const resultDiv = document.getElementById('pblResult');
+            resultDiv.classList.add('hidden');
+            
+            // Simulate processing
+            setTimeout(() => {
+                resultDiv.classList.remove('hidden');
+                document.getElementById('pblTitle').innerText = `プロジェクト案: 「${input}」× 社会貢献`;
+                document.getElementById('pblDesc').innerText = `「${input}」をテーマに、地域の専門家へのインタビューや、実際の商品開発・発表会を行うプロジェクト。失敗を恐れずに挑戦し、社会との繋がりを実感します。`;
+            }, 800);
+        }
+
+        function scrollToCTA() {
+            document.querySelector('footer').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setPersona('child');
+
+            // --- Chart.js: Sustainability Model ---
+            const ctx = document.getElementById('sustainabilityChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['企業・個人協賛', '親御さん利用料', '独立事業収益'],
+                    datasets: [{
+                        data: [45, 35, 20],
+                        backgroundColor: ['#2E8B57', '#E5A358', '#6366f1'],
+                        borderWidth: 0,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { family: "'Zen Maru Gothic', sans-serif" },
+                                usePointStyle: true,
+                                padding: 20
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: '「子ども無料」を支える収益構造',
+                            font: { size: 16, family: "'Shippori Mincho', serif" },
+                            padding: { bottom: 20 },
+                            color: '#2C2C2C'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.label + ': ' + context.raw + '%';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        });
+    </script>
+</body>
+</html>
