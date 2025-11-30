@@ -276,46 +276,68 @@
 
             <div class="grid md:grid-cols-2 gap-12 items-start">
                 <!-- PBL Demo -->
-                <div class="bg-indigo-50 rounded-3xl p-8 shadow-sm">
-                    <h3 class="text-2xl font-bold text-indigo-900 mb-2">✨ PBL伴走プラン</h3>
-                    <p class="text-sm text-indigo-700 mb-6">探求テーマ設定からアウトプットまでを個別指導。お子様の「好き」をプロジェクト化します。</p>
-                    
-                    <div class="bg-white rounded-2xl p-6 shadow-sm">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">体験デモ：興味を入力してください</label>
-                        <div class="flex gap-2 mb-4">
-                            <input type="text" id="pblInput" placeholder="例：恐竜、動画編集、料理..." 
-                                class="w-full p-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:outline-none bg-gray-50">
-                            <button onclick="generatePBL()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 rounded-lg font-bold">生成</button>
-                        </div>
-                        <div id="pblResult" class="hidden animate-fade-in">
-                            <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
-                                <h4 class="font-bold text-indigo-800 text-sm mb-1" id="pblTitle"></h4>
-                                <p class="text-xs text-gray-600" id="pblDesc"></p>
+                <div class="bg-indigo-50 rounded-3xl p-8 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold text-indigo-900 mb-2">✨ PBL伴走プラン</h3>
+                        <p class="text-sm text-indigo-700 mb-6">探求テーマ設定からアウトプットまでを個別指導。お子様の「好き」をプロジェクト化します。</p>
+                        
+                        <div class="bg-white rounded-2xl p-6 shadow-sm">
+                            <label class="block text-sm font-bold text-gray-700 mb-2">体験デモ：興味を入力してください</label>
+                            <div class="flex gap-2 mb-4">
+                                <input type="text" id="pblInput" placeholder="例：恐竜、動画編集、料理..." 
+                                    class="w-full p-3 rounded-lg border border-gray-200 focus:border-indigo-500 focus:outline-none bg-gray-50">
+                                <button onclick="generatePBL()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 rounded-lg font-bold">生成</button>
+                            </div>
+                            <div id="pblResult" class="hidden animate-fade-in">
+                                <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-100">
+                                    <h4 class="font-bold text-indigo-800 text-sm mb-1" id="pblTitle"></h4>
+                                    <p class="text-xs text-gray-600" id="pblDesc"></p>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- 詳しく見るボタン (PBL) -->
+                    <a href="https://kokomoibasyo-dev.github.io/kokomolp/#" target="_blank" class="mt-4 self-end inline-flex items-center text-sm font-bold text-[#E5A358] hover:text-[#d08e45] transition space-x-1">
+                        <span>詳しく見る</span>
+                        <span class="text-base">→</span>
+                    </a>
                 </div>
 
                 <!-- Disaster Prevention -->
                 <div class="space-y-6">
-                    <div class="bg-orange-50 p-6 rounded-2xl border-l-4 border-orange-400 card-hover">
-                        <div class="flex items-start">
-                            <div class="text-3xl mr-4">🛡️</div>
-                            <div>
-                                <h3 class="font-bold text-orange-900 text-lg">地域防犯防災コンサルタント</h3>
-                                <p class="text-sm text-gray-700 mt-2">自治体・企業向け。地域特性に合わせた実践的な防犯防災計画の策定を支援します。</p>
+                    <div class="bg-orange-50 p-6 rounded-2xl border-l-4 border-orange-400 card-hover flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start">
+                                <div class="text-3xl mr-4">🛡️</div>
+                                <div>
+                                    <h3 class="font-bold text-orange-900 text-lg">地域防犯防災コンサルタント</h3>
+                                    <p class="text-sm text-gray-700 mt-2">自治体・企業向け。地域特性に合わせた実践的な防犯防災計画の策定を支援します。</p>
+                                </div>
                             </div>
                         </div>
+                        <!-- 詳しく見るボタン (コンサルタント) -->
+                        <a href="https://kokomoibasyo-dev.github.io/kokomolp/#" target="_blank" class="mt-4 self-end inline-flex items-center text-sm font-bold text-[#E5A358] hover:text-[#d08e45] transition space-x-1">
+                            <span>詳しく見る</span>
+                            <span class="text-base">→</span>
+                        </a>
                     </div>
                     
-                    <div class="bg-blue-50 p-6 rounded-2xl border-l-4 border-blue-400 card-hover">
-                        <div class="flex items-start">
-                            <div class="text-3xl mr-4">⛑️</div>
-                            <div>
-                                <h3 class="font-bold text-blue-900 text-lg">子ども防犯防災教室</h3>
-                                <p class="text-sm text-gray-700 mt-2">子どもたち自身が「守られる側」から「自らを守る」主体になれるよう、体験型の教育プログラムを提供します。</p>
+                    <div class="bg-blue-50 p-6 rounded-2xl border-l-4 border-blue-400 card-hover flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-start">
+                                <div class="text-3xl mr-4">⛑️</div>
+                                <div>
+                                    <h3 class="font-bold text-blue-900 text-lg">子ども防犯防災教室</h3>
+                                    <p class="text-sm text-gray-700 mt-2">子どもたち自身が「守られる側」から「自らを守る」主体になれるよう、体験型の教育プログラムを提供します。</p>
+                                </div>
                             </div>
                         </div>
+                        <!-- 詳しく見るボタン (教室) -->
+                        <a href="https://kokomoibasyo-dev.github.io/kokomolp/#" target="_blank" class="mt-4 self-end inline-flex items-center text-sm font-bold text-[#E5A358] hover:text-[#d08e45] transition space-x-1">
+                            <span>詳しく見る</span>
+                            <span class="text-base">→</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -544,7 +566,7 @@
         // --- Interaction Logic: PBL Generator (Mock) ---
         function generatePBL() {
             const input = document.getElementById('pblInput').value;
-            if (!input) return alert("興味のあることを入力してください");
+            if (!input) return alert("興味のあることを入力してください"); // Placeholder for custom modal
 
             const resultDiv = document.getElementById('pblResult');
             resultDiv.classList.add('hidden');
